@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 
 def mean_square_error(y_true: np.ndarray, y_pred: np.ndarray) -> float:
@@ -16,7 +17,7 @@ def mean_square_error(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     -------
     MSE of given predictions
     """
-    raise NotImplementedError()
+    return float(np.mean((y_true - y_pred) ** 2))  # todo check if we need to specify np,mean to return float, not arr
 
 
 def misclassification_error(y_true: np.ndarray, y_pred: np.ndarray, normalize: bool = True) -> float:
@@ -36,8 +37,14 @@ def misclassification_error(y_true: np.ndarray, y_pred: np.ndarray, normalize: b
     -------
     Misclassification of given predictions
     """
-    raise NotImplementedError()
-
+    n = len(y_true)
+    df = pd.DataFrame()
+    df["y_pred"] = y_pred
+    df["y_true"] = y_true
+    s = (df.y_pred.ne(df.y_true)
+         .rename({True: 1, False: 0}))
+    res = sum(s) / n
+    return res
 
 def accuracy(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     """
@@ -54,7 +61,14 @@ def accuracy(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     -------
     Accuracy of given predictions
     """
-    raise NotImplementedError()
+    n = len(y_true)
+    df = pd.DataFrame()
+    df["y_pred"] = y_pred
+    df["y_true"] = y_true
+    s = (df.y_pred.eq(df.y_true)
+         .rename({True: 1, False: 0}))
+    res = sum(s) / n
+    return res
 
 
 def cross_entropy(y_true: np.ndarray, y_pred: np.ndarray) -> float:
@@ -72,4 +86,4 @@ def cross_entropy(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     -------
     Cross entropy of given predictions
     """
-    raise NotImplementedError()
+    return 0.314 #todo implement

@@ -3,12 +3,13 @@ from typing import NoReturn
 from . import LinearRegression
 from ...base import BaseEstimator
 import numpy as np
+from IMLearn.metrics import loss_functions as ls
 
-
-class PolynomialFitting(BaseEstimator):
+class PolynomialFitting(LinearRegression):  # todo what the fuck is the story of this BaseEstimator?????
     """
     Polynomial Fitting using Least Squares estimation
     """
+
     def __init__(self, k: int) -> PolynomialFitting:
         """
         Instantiate a polynomial fitting estimator
@@ -18,8 +19,8 @@ class PolynomialFitting(BaseEstimator):
         k : int
             Degree of polynomial to fit
         """
+        self.k = k
         super().__init__()
-        raise NotImplementedError()
 
     def _fit(self, X: np.ndarray, y: np.ndarray) -> NoReturn:
         """
@@ -33,7 +34,9 @@ class PolynomialFitting(BaseEstimator):
         y : ndarray of shape (n_samples, )
             Responses of input data to fit to
         """
-        raise NotImplementedError()
+        mat = self.__transform(X)
+        trans_mat = np.transpose(mat)
+        self.coefs_ = np.linalg.inv(trans_mat @ mat) @ trans_mat @ y
 
     def _predict(self, X: np.ndarray) -> np.ndarray:
         """
@@ -49,7 +52,7 @@ class PolynomialFitting(BaseEstimator):
         responses : ndarray of shape (n_samples, )
             Predicted responses of given samples
         """
-        raise NotImplementedError()
+        return self.__transform(self.__transform(X)) @ self.coefs_
 
     def _loss(self, X: np.ndarray, y: np.ndarray) -> float:
         """
@@ -68,7 +71,9 @@ class PolynomialFitting(BaseEstimator):
         loss : float
             Performance under MSE loss function
         """
-        raise NotImplementedError()
+
+
+        return super()._loss(self.__transform(X), y)
 
     def __transform(self, X: np.ndarray) -> np.ndarray:
         """
@@ -83,4 +88,4 @@ class PolynomialFitting(BaseEstimator):
         transformed: ndarray of shape (n_samples, k+1)
             Vandermonde matrix of given samples up to degree k
         """
-        raise NotImplementedError()
+        return np.vander(X, self.k + 1)
